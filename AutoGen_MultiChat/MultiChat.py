@@ -77,14 +77,14 @@ async def main():
     # LLM Models Configuration
     config_list_mistral = [
     {
-    'base_url': "http://localhost:20234",
+    'base_url': "http://localhost:8000",
     'api_key': "NULL",
     'model': "mistral"
     }
     ]
     config_list_phi = [
     {
-    'base_url': "http://localhost:1904",
+    'base_url': "http://localhost:17901",
     'api_key': "NULL",
     'model': "phi"
     }
@@ -103,7 +103,6 @@ async def main():
     llm_config_phi={
     "config_list": config_list_phi,
     }
-    # Use the llms
 
     # Setting up the autogen coder
     coder = AssistantAgent(
