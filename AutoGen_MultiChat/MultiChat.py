@@ -1,79 +1,7 @@
-from autogen import AssistantAgent,UserProxyAgent
+import autogen
 import semantic_kernel as sk
-from semantic_kernel.skill_definition import (
-    sk_function,
-    sk_function_context_parameter,
-)
-from semantic_kernel.orchestration.sk_context import SKContext
-class MathPlugin:
-    @sk_function(
-        description="Takes the square root of a number",
-        name="Sqrt",
-        input_description="The value to take the square root of",
-    )
-    def square_root(self, number: str) -> str:
-        return str(math.sqrt(float(number)))
-
-    @sk_function(
-        description="Adds two numbers together",
-        name="Add",
-    )
-    @sk_function_context_parameter(
-        name="input",
-        description="The first number to add",
-    )
-    @sk_function_context_parameter(
-        name="number2",
-        description="The second number to add",
-    )
-    def add(self, context: SKContext) -> str:
-        return str(float(context["input"]) + float(context["number2"]))
-
-    @sk_function(
-        description="Subtract two numbers",
-        name="Subtract",
-    )
-    @sk_function_context_parameter(
-        name="input",
-        description="The first number to subtract from",
-    )
-    @sk_function_context_parameter(
-        name="number2",
-        description="The second number to subtract away",
-    )
-    def subtract(self, context: SKContext) -> str:
-        return str(float(context["input"]) - float(context["number2"]))
-
-    @sk_function(
-        description="Multiply two numbers. When increasing by a percentage, don't forget to add 1 to the percentage.",
-        name="Multiply",
-    )
-    @sk_function_context_parameter(
-        name="input",
-        description="The first number to multiply",
-    )
-    @sk_function_context_parameter(
-        name="number2",
-        description="The second number to multiply",
-    )
-    def multiply(self, context: SKContext) -> str:
-        return str(float(context["input"]) * float(context["number2"]))
-
-    @sk_function(
-        description="Divide two numbers",
-        name="Divide",
-    )
-    @sk_function_context_parameter(
-        name="input",
-        description="The first number to divide from",
-    )
-    @sk_function_context_parameter(
-        name="number2",
-        description="The second number to divide by",
-    )
-    def divide(self, context: SKContext) -> str:
-        return str(float(context["input"]) / float(context["number2"]))
-async def main():
+import random
+def main():
     # LLM Models Configuration
     config_list_mistral = [
     {
@@ -84,19 +12,13 @@ async def main():
     ]
     config_list_phi = [
     {
-    'base_url': "http://localhost:17901",
+    'base_url': "http://localhost:13750",
     'api_key': "NULL",
     'model': "phi"
     }
     ]
-    # Making Semantic kernel based functions
-    kernel = sk.Kernel()
-    kernel.import_skill(MathPlugin(), skill_name="MathPlugin")
     # Register the LLM and Functions
     llm_config_mistral={
-    "functions":[
-        kernel
-    ],
     "config_list": config_list_mistral,
     }
 
@@ -105,12 +27,12 @@ async def main():
     }
 
     # Setting up the autogen coder
-    coder = AssistantAgent(
+    coder = autogen.AssistantAgent(
     name="Coder",
     llm_config=llm_config_phi
     )
     # Setting up the proc
-    user_proxy = UserProxyAgent(
+    user_proxy = autogen.UserProxyAgent(
     name="user_proxy",
     human_input_mode="NEVER",
     max_consecutive_auto_reply=10,
@@ -122,7 +44,8 @@ async def main():
     )
 
     task="""
-    Calculate 20*20*20
+    Can you give me a random number
     """
-
     user_proxy.initiate_chat(coder, message=task)
+if __name__ == "__main__":
+    main()
